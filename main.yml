@@ -4,4 +4,14 @@
   gather_facts: true
   become: true
 
-  tasks: [ ]
+  tasks:
+  - name: "[Updates] : Configure apt repos"
+    when:
+      - repos is defined
+      - repos|length >0
+    ansible.builtin.apt_repository:
+      repo: "{{ item.source }}"
+      state: "{{ item.state | default(present) }}"
+      update_cache: true
+    with_items:
+      - "{{ repos }}"
