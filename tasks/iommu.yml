@@ -6,7 +6,9 @@
     line: "options vfio_iommu_type1 allow_unsafe_interrupts=1"
     insertbefore: EOF
     create: true
-  notify: reset_shell
+  notify:
+    - reset_shell
+    - update_initramfs
 
 - name: "[IOMMU] Ignore MSRS"
   when: iommu.ignore_msrs.enabled
@@ -15,7 +17,9 @@
     line: "options kvm ignore_msrs=1"
     insertbefore: EOF
     create: true
-  notify: reset_shell
+  notify:
+    - reset_shell
+    - update_initramfs
 
 - name: "[IOMMU] Run handlers"
   meta: flush_handlers
