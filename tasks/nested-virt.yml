@@ -1,0 +1,14 @@
+---
+- name: "[NestedVirt] Enable nested virtualization"
+  when:
+    - cpu.nested_virtualization.enabled
+    - cpu.nested_virtualization.file is defined
+  ansible.builtin.lineinfile:
+    path: "{{ cpu.nested_virtualization.file }}"
+    line: "options kvm-{{ cpu.type }} nested=Y"
+    insertbefore: EOF
+    create: true
+  notify: update_initramfs
+
+- name: "[NestedVirt] Flush Handlers"
+  meta: flush_handlers
