@@ -1,0 +1,20 @@
+---
+- name: "[GRUB] Read existing grub cmdline"
+  when: grub.cmdline.value is defined
+  register: __existing_cmdline
+  ansible.builtin.shell: "cat {{ grub.file | default(/etc/default/grub) }} | grep CMDLINE_LINUX_DEFAULT | cut -c 29- | sed 's/.$//'"
+  changed_when: false
+
+- name: "[GRUB] Modify grub cmdline"
+  when:
+    - grub.cmdline.value is defined
+    - grub.cmdline.value not in __existing_cmdline.stdout
+  ansible.builtin.lineinfile:
+    path: "{{ grub.file | default(/etc/default/grub) }}"
+    regexp: "^(.*)GRUB_CMDLINE_LINUX_DEFAULT(.*)$"
+    line: 'GRUB_CMDLINE_LINUX_DEFAULT="{% if grub.cmdline.append %}{{ __existing_cmdline.stdout }} {% endif %}{{ iommu.cmdline.value }}"'
+    backrefs: true
+  notify: update_grub
+
+- name: "[GRUB] Flush Handlers"
+  meta: flush_handlers
