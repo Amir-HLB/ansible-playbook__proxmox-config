@@ -6,6 +6,9 @@
     line: "options vfio_iommu_type1 allow_unsafe_interrupts=1"
     insertbefore: EOF
     create: true
+    user: root
+    group: root
+    mode: 0644
   notify:
     - reset_shell
     - update_initramfs
@@ -17,6 +20,9 @@
     line: "options kvm ignore_msrs=1"
     insertbefore: EOF
     create: true
+    user: root
+    group: root
+    mode: 0644
   notify:
     - reset_shell
     - update_initramfs

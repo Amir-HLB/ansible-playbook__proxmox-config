@@ -1,12 +1,12 @@
 ---
 - name: update_initramfs
   become: true
-  ansible.builtin.shell: update-initramfs -u
+  ansible.builtin.command: update-initramfs -u
 
 - name: update_grub
   become: true
-  ansible.builtin.shell: update-grub
+  ansible.builtin.command: update-grub
 
 - name: reset_shell
   become: true
-  ansible.builtin.shell: reset
+  ansible.builtin.command: reset

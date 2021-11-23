@@ -8,6 +8,9 @@
     line: "options kvm-{{ cpu.type }} nested=Y"
     insertbefore: EOF
     create: true
+    user: root
+    group: root
+    mode: 0644
   notify: update_initramfs
 
 - name: "[NestedVirt] Flush Handlers"

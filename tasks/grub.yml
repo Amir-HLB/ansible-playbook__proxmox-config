@@ -1,7 +1,8 @@
---- # TODO: Migrate to a grub role
+---
+# TODO: Migrate to a grub role
 - name: "[GRUB] Read existing grub cmdline"
   register: __existing_cmdline
-  ansible.builtin.shell: "cat {{ grub.cmdline.file | default(/etc/default/grub) }} | grep CMDLINE_LINUX_DEFAULT | cut -c 29- | sed 's/.$//'"
+  ansible.builtin.shell: "set -o pipefail && cat {{ grub.cmdline.file | default(/etc/default/grub) }} | grep CMDLINE_LINUX_DEFAULT | cut -c 29- | sed 's/.$//'"
   changed_when: false
 
 - name: "[GRUB] Modify grub cmdline"
@@ -11,6 +12,9 @@
     regexp: "^(.*)GRUB_CMDLINE_LINUX_DEFAULT(.*)$"
     line: 'GRUB_CMDLINE_LINUX_DEFAULT="{% if grub.cmdline.append %}{{ __existing_cmdline.stdout }} {% endif %}{{ iommu.cmdline.value }}"'
     backrefs: true
+    user: root
+    group: root
+    mode: 0644
   notify: update_grub
 
 - name: "[GRUB] Flush Handlers"

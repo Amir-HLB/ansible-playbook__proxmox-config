@@ -7,6 +7,9 @@
     path: "{{ vfio.modules.file | default(/etc/modules) }}"
     line: "{{ item }}"
     create: true
+    user: root
+    group: root
+    mode: 0644
   with_items:
     - "{{ vfio.modules.list }}"
   notify: update_initramfs
@@ -20,6 +23,9 @@
     line: 'blacklist {{ item }}'
     insertbefore: EOF
     create: true
+    user: root
+    group: root
+    mode: 0644
   with_items:
     - "{{ vfio.drivers_blacklist.list }}"
   notify: update_initramfs
@@ -31,6 +37,9 @@
     line: "options vfio-pci ids={{ vfio.gpu_ids }} disable_vga=1"
     insertbefore: EOF
     create: true
+    user: root
+    group: root
+    mode: 0644
   notify: update_initramfs
 
 - name: "[VFIO] Run handlers"
