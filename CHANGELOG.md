@@ -13,3 +13,5 @@
   * Blacklist drivers
 
 * Configure nested virtualization
+* Configure CPU Frequency Scaling Governor
+* Configure Intel GVT-G
