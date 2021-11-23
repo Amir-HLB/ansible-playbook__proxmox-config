@@ -1,4 +1,4 @@
----
+--- # TODO: Migrate to a grub role
 - name: "[GRUB] Read existing grub cmdline"
   when: grub.cmdline.value is defined
   register: __existing_cmdline
