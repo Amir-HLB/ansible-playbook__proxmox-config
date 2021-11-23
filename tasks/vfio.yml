@@ -1,0 +1,37 @@
+---
+- name: "[VFIO] Load modules"
+  when:
+    - vfio.modules.list is defined
+    - vfio.modules.list|length>0
+  ansible.builtin.lineinfile:
+    path: "{{ vfio.modules.file | default(/etc/modules) }}"
+    line: "{{ item }}"
+    create: true
+  with_items:
+    - "{{ vfio.modules.list }}"
+  notify: update_initramfs
+
+- name: "[VFIO] Blacklist drivers"
+  when:
+    - vfio.drivers_blacklist is defined
+    - vfio.drivers_blacklist|length>0
+  ansible.builtin.lineinfile:
+    path: "{{ vfio.drivers_blacklist.file | default(/etc/modprobe.d/blacklist.conf) }}"
+    line: 'blacklist {{ item }}'
+    insertbefore: EOF
+    create: true
+  with_items:
+    - "{{ vfio.drivers_blacklist.list }}"
+  notify: update_initramfs
+
+- name: "[VFIO] Add GPUs to VFIO"
+  when: vfio.gpu_ids is defined
+  ansible.builtin.lineinfile:
+    path: /etc/modprobe.d/vfio.conf
+    line: "options vfio-pci ids={{ vfio.gpu_ids }} disable_vga=1"
+    insertbefore: EOF
+    create: true
+  notify: update_initramfs
+
+- name: "[VFIO] Run handlers"
+  meta: flush_handlers
