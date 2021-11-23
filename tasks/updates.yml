@@ -1,15 +1,15 @@
 ---
 - name: "[Updates] : Configure apt repos"
   when:
-    - repos is defined
-    - repos|length >0
+    - updates.repos is defined
+    - updates.repos|length >0
   ansible.builtin.apt_repository:
     repo: "{{ item.source }}"
     state: "{{ item.state | default(present) }}"
     update_cache: true
     cache_valid_time: 3600
   with_items:
-    - "{{ repos }}"
+    - "{{ updates.repos }}"
 
 - name: "[Updates] Upgrade system"
   when: updates.upgrade
