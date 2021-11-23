@@ -1,0 +1,21 @@
+---
+- name: "[IOMMU] Allow unsafe interrupts"
+  when: iommu.unsafe_interrupts.enabled
+  ansible.builtin.lineinfile:
+    path: "{{ iommu.unsafe_interrupts.file | default(/etc/modprobe.d/iommu_unsafe_interrupts.conf) }}"
+    line: "options vfio_iommu_type1 allow_unsafe_interrupts=1"
+    insertbefore: EOF
+    create: true
+  notify: reset_shell
+
+- name: "[IOMMU] Ignore MSRS"
+  when: iommu.ignore_msrs.enabled
+  ansible.builtin.lineinfile:
+    path: "{{ iommu.ignore_msrs.file | default(/etc/modprobe.d/kvm.conf) }}"
+    line: "options kvm ignore_msrs=1"
+    insertbefore: EOF
+    create: true
+  notify: reset_shell
+
+- name: "[IOMMU] Run handlers"
+  meta: flush_handlers
